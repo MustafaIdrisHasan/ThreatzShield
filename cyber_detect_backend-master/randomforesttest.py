@@ -6,12 +6,15 @@ from sklearn.model_selection import train_test_split
 import joblib
 import re
 import nltk
-nltk.download('stopwords')
 from nltk.util import pr
 stemmer = nltk.SnowballStemmer('english')
-from nltk.corpus import stopwords
 import string
-stopword = set(stopwords.words("english"))
+# Try to load NLTK stopwords; fall back to a small built-in list when unavailable/offline
+try:
+  from nltk.corpus import stopwords
+  stopword = set(stopwords.words("english"))
+except Exception:
+  stopword = set(["the","a","an","and","or","is","are","to","of","in","on","for","with","this","that"])  
 
 df = pd.read_csv("twitter_data.csv")
 df['labels'] = df['class'].map({0:"Hate Speech Detected" , 1:"Offensive language detected" , 2: "No hate and offensive speech"})
@@ -58,4 +61,3 @@ def train_randomforest():
   model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
   model.fit(X_train, y_train)
   return model
-
