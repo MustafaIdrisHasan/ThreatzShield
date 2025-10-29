@@ -5,15 +5,20 @@ BASE_DIR = pathlib.Path(__file__).resolve().parents[1]
 BACKEND_DIR = BASE_DIR / "cyber_detect_backend-master"
 sys.path.append(str(BACKEND_DIR))
 
+import unittest
 from randomforesttest import clean
 
 
-def test_clean_basic():
-    text = "This, right here, is a SIMPLE test!!! 123"
-    out = clean(text)
-    # digits and punctuation removed; lowercase; basic stopwords dropped; stemmed
-    assert "123" not in out
-    assert "," not in out
-    assert "this" not in out  # likely removed as a stopword (or fallback list)
-    assert "simpl" in out  # stemmed form of 'simple'
+class TestPreprocess(unittest.TestCase):
+    def test_clean_basic(self):
+        text = "This, right here, is a SIMPLE test!!! 123"
+        out = clean(text)
+        # digits and punctuation removed; lowercase; basic stopwords dropped; stemmed
+        self.assertNotIn("123", out)
+        self.assertNotIn(",", out)
+        self.assertNotIn("this", out)  # likely removed as a stopword (or fallback list)
+        self.assertIn("simpl", out)  # stemmed form of 'simple'
 
+
+if __name__ == "__main__":
+    unittest.main()

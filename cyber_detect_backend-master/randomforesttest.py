@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
@@ -16,7 +17,8 @@ try:
 except Exception:
   stopword = set(["the","a","an","and","or","is","are","to","of","in","on","for","with","this","that"])  
 
-df = pd.read_csv("twitter_data.csv")
+DATA_PATH = os.path.join(os.path.dirname(__file__), "twitter_data.csv")
+df = pd.read_csv(DATA_PATH)
 df['labels'] = df['class'].map({0:"Hate Speech Detected" , 1:"Offensive language detected" , 2: "No hate and offensive speech"})
 df = df[['tweet' , 'labels']]
 
