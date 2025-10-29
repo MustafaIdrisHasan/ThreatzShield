@@ -54,27 +54,25 @@ def dynamic_threshold_prediction(bert_confidence, lstm_confidence, rf_confidence
     rf_weight = 0.1
 
     total_normal = (bert_weight*bert_confidence) + (lstm_weight*lstm_confidence) + (rf_weight*rf_confidence)
+    label = "Normal" if total_normal >= 0.5 else "Cyberbullying"
     print(total_normal)
-    if total_normal >= 0.5:
-        print("Normal")
-    else:
-        print("Cyberbullying")
+    print(label)
+    return label, float(total_normal)
 
 
 
-input_text = input("Enter text: \n")
-total_output = predict_outputs(input_text)
-print(total_output)
-# Example usage
-bert_confidence = total_output[1]
+if __name__ == "__main__":
+    input_text = input("Enter text: \n")
+    total_output = predict_outputs(input_text)
+    print(total_output)
+    # Example usage
+    bert_confidence = total_output[1]
 
-bert_confidence = adjust_normal_percentage(bert_confidence[1]/100, bert_confidence[0]/100 , bert_confidence[2]/100)
-lstm_confidence = total_output[0]  # LSTM has Hate and Normal only (or fallback)
-rf_confidence = total_output[2]
-rf_confidence = adjust_normal_percentage(rf_confidence[2],rf_confidence[0] , rf_confidence[1])
+    bert_confidence = adjust_normal_percentage(bert_confidence[1]/100, bert_confidence[0]/100 , bert_confidence[2]/100)
+    lstm_confidence = total_output[0]  # LSTM has Hate and Normal only (or fallback)
+    rf_confidence = total_output[2]
+    rf_confidence = adjust_normal_percentage(rf_confidence[2],rf_confidence[0] , rf_confidence[1])
 
+    print(bert_confidence//100, lstm_confidence[1], rf_confidence)
 
-print(bert_confidence//100, lstm_confidence[1], rf_confidence)
-
-
-dynamic_threshold_prediction(bert_confidence, lstm_confidence[1], rf_confidence)
+    dynamic_threshold_prediction(bert_confidence, lstm_confidence[1], rf_confidence)
