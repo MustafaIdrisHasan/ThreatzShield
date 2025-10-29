@@ -1,24 +1,30 @@
-from lstmtest3 import lstm_predict
-
-from tensorflow.keras.models import load_model
-
-
-#LSTM MODEL
-lstm_model = load_model('model3.h5')
+try:
+    from lstmtest3 import lstm_predict
+    from tensorflow.keras.models import load_model
+    lstm_model = load_model('model3.h5')
+except Exception as e:
+    lstm_predict = None
+    lstm_model = None
 
 from berttest2 import bert_predict
 
 ##RANDOM FOREST
 import joblib
+from randomforesttest import randomforestpredict, train_randomforest
 
 model_filename = 'random_forest_model.pkl'
-randomforest_model = joblib.load(model_filename)
-
-from randomforesttest import randomforestpredict
+try:
+    randomforest_model = joblib.load(model_filename)
+except Exception:
+    randomforest_model = train_randomforest()
 
 def predict_outputs(text):
     total_output = []
-    total_output.append(lstm_predict(lstm_model , text))
+    if lstm_predict is not None and lstm_model is not None:
+        total_output.append(lstm_predict(lstm_model, text))
+    else:
+        # Fallback when LSTM is unavailable (e.g., incompatible TensorFlow/Keras)
+        total_output.append([0.5, 0.5])
     total_output.append(bert_predict(text))
     total_output.append(randomforestpredict(randomforest_model , text))
     return total_output
@@ -63,7 +69,7 @@ print(total_output)
 bert_confidence = total_output[1]
 
 bert_confidence = adjust_normal_percentage(bert_confidence[1]/100, bert_confidence[0]/100 , bert_confidence[2]/100)
-lstm_confidence = total_output[0]  # LSTM has Hate and Normal only
+lstm_confidence = total_output[0]  # LSTM has Hate and Normal only (or fallback)
 rf_confidence = total_output[2]
 rf_confidence = adjust_normal_percentage(rf_confidence[2],rf_confidence[0] , rf_confidence[1])
 
