@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TextGuard - Message Board</title>
+    <title>THREATZSHIELD</title>
     <style>
         * {
             margin: 0;
@@ -12,377 +12,362 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #fff;
             padding: 20px;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 900px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            border: 8px solid #fff;
+            padding: 40px;
+            background: #000;
         }
 
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
+            border-bottom: 8px solid #fff;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
         }
 
-        .header h1 {
-            font-size: 2.5em;
+        h1 {
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
             margin-bottom: 10px;
-            font-weight: 300;
+            text-shadow: 4px 4px 0 #fff;
         }
 
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+        .subtitle {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: #fff;
+            color: #000;
+            padding: 8px 12px;
+            display: inline-block;
+            margin-top: 10px;
         }
 
-        .main-content {
-            padding: 40px;
-        }
-
-        .message-form {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border-left: 4px solid #3498db;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
+        .form-section {
+            margin-bottom: 40px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus, textarea:focus {
-            outline: none;
-            border-color: #3498db;
+            font-size: 18px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
         }
 
         textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
+            width: 100%;
+            background: #000;
+            color: #fff;
+            border: 6px solid #fff;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
             font-size: 16px;
-            font-weight: 600;
+            resize: vertical;
+            min-height: 200px;
+        }
+
+        textarea:focus {
+            outline: none;
+            background: #fff;
+            color: #000;
+        }
+
+        button {
+            background: #fff;
+            color: #000;
+            border: 6px solid #fff;
+            padding: 20px 40px;
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            margin-top: 20px;
+            width: 100%;
+            transition: all 0.1s;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
+        button:hover {
+            background: #000;
+            color: #fff;
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        button:active {
+            transform: translate(4px, 4px);
+            box-shadow: -4px -4px 0 #fff;
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .message-board {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #e1e8ed;
+        .result {
+            border: 8px solid #fff;
+            padding: 30px;
+            margin-top: 40px;
+            display: none;
+            background: #000;
         }
 
-        .message {
-            background: #f8f9fa;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #3498db;
-            transition: box-shadow 0.3s ease;
+        .result.show {
+            display: block;
         }
 
-        .message:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .message-header {
+        .result-header {
+            border-bottom: 4px solid #fff;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
         }
 
-        .message-author {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .message-time {
-            color: #7f8c8d;
-            font-size: 0.9em;
-        }
-
-        .message-content {
-            color: #34495e;
-            line-height: 1.6;
+        .result-title {
+            font-size: 24px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
         }
 
         .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: 600;
+            padding: 12px 24px;
+            border: 4px solid #fff;
+            font-weight: 900;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 18px;
         }
 
         .status-safe {
-            background: #d5f4e6;
-            color: #27ae60;
-        }
-
-        .status-warning {
-            background: #fef5e7;
-            color: #f39c12;
+            background: #fff;
+            color: #000;
         }
 
         .status-danger {
-            background: #fadbd8;
-            color: #e74c3c;
+            background: #000;
+            color: #fff;
+            border-color: #fff;
         }
 
-        .navigation {
-            text-align: center;
-            margin-top: 30px;
+        .status-loading {
+            background: #fff;
+            color: #000;
+            animation: blink 1s infinite;
         }
 
-        .nav-link {
-            display: inline-block;
-            margin: 0 10px;
-            padding: 10px 20px;
-            background: #ecf0f1;
-            color: #2c3e50;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s ease;
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
         }
 
-        .nav-link:hover {
-            background: #bdc3c7;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .message-display {
+            background: #fff;
+            color: #000;
             padding: 20px;
-            border-radius: 10px;
+            margin: 20px 0;
+            border: 4px solid #000;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-box {
+            border: 4px solid #fff;
+            padding: 20px;
+            background: #000;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 900;
+            font-family: 'Courier New', monospace;
+        }
+
+        .error-box {
+            border: 6px solid #fff;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            border-left: 12px solid #fff;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 4px solid #fff;
+            font-size: 12px;
             text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                border-width: 4px;
+            }
 
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
+            h1 {
+                font-size: 32px;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛡️ TextGuard</h1>
-            <p>AI-Powered Content Moderation & Message Board</p>
+            <h1>THREATZSHIELD</h1>
+            <div class="subtitle">AI CONTENT MODERATION SYSTEM</div>
         </div>
 
-        <div class="main-content">
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-number">1,247</div>
-                    <div class="stat-label">Messages Scanned</div>
+        <div class="form-section">
+            <label>INPUT TEXT FOR ANALYSIS</label>
+            <form id="messageForm">
+                <textarea id="message" name="message" placeholder="ENTER YOUR TEXT HERE..." required></textarea>
+                <button type="submit" id="submitBtn">ANALYZE</button>
+            </form>
+
+            <div class="error-box" id="errorMessage"></div>
+
+            <div class="result" id="result">
+                <div class="result-header">
+                    <div class="result-title">ANALYSIS RESULT</div>
+                    <div class="status-badge status-loading" id="statusBadge">PROCESSING...</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">98.5%</div>
-                    <div class="stat-label">Accuracy Rate</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">23</div>
-                    <div class="stat-label">Harmful Content Detected</div>
-                </div>
-            </div>
-
-            <div class="message-form">
-                <h3>📝 Post a New Message</h3>
-                <form id="messageForm">
-                    <div class="form-group">
-                        <label for="author">Your Name:</label>
-                        <input type="text" id="author" name="author" placeholder="Enter your name" required>
+                
+                <div class="message-display" id="analyzedText"></div>
+                
+                <div class="metrics">
+                    <div class="metric-box">
+                        <div class="metric-label">CONFIDENCE</div>
+                        <div class="metric-value" id="confidenceValue">--</div>
                     </div>
-                    <div class="form-group">
-                        <label for="message">Message:</label>
-                        <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn">🚀 Post Message</button>
-                </form>
-            </div>
-
-            <div class="message-board">
-                <h3>💬 Recent Messages</h3>
-                <div id="messagesList">
-                    <!-- Sample messages -->
-                    <div class="message">
-                        <div class="message-header">
-                            <span class="message-author">Sarah Johnson</span>
-                            <div>
-                                <span class="status-badge status-safe">Safe</span>
-                                <span class="message-time">2 minutes ago</span>
-                            </div>
-                        </div>
-                        <div class="message-content">
-                            Hey everyone! Just wanted to share some great news about our project. The team has been working really hard and we're making excellent progress! 🎉
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="message-header">
-                            <span class="message-author">Mike Chen</span>
-                            <div>
-                                <span class="status-badge status-warning">Review</span>
-                                <span class="message-time">15 minutes ago</span>
-                            </div>
-                        </div>
-                        <div class="message-content">
-                            This is a test message to see how the system handles different types of content. Let's see what happens!
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="message-header">
-                            <span class="message-author">Alex Rodriguez</span>
-                            <div>
-                                <span class="status-badge status-safe">Safe</span>
-                                <span class="message-time">1 hour ago</span>
-                            </div>
-                        </div>
-                        <div class="message-content">
-                            Thanks for the update, Sarah! Really excited to see where this project goes. The collaboration has been amazing so far.
-                        </div>
+                    <div class="metric-box">
+                        <div class="metric-label">STATUS</div>
+                        <div class="metric-value" id="statusValue" style="font-size: 24px;">--</div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="navigation">
-                <a href="moderation.html" class="nav-link">🔍 Moderation Dashboard</a>
-                <a href="analytics.html" class="nav-link">📊 Analytics</a>
-                <a href="settings.html" class="nav-link">⚙️ Settings</a>
-            </div>
+        <div class="footer">
+            THREATZSHIELD V1.0 | BERT + LSTM + RANDOM FOREST ENSEMBLE
         </div>
     </div>
 
     <script>
         const API_BASE = 'http://127.0.0.1:8000';
 
-        // Simple message posting functionality with backend call
         document.getElementById('messageForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const author = document.getElementById('author').value;
-            const message = document.getElementById('message').value;
+            const message = document.getElementById('message').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('errorMessage');
+            const statusBadge = document.getElementById('statusBadge');
+            const analyzedText = document.getElementById('analyzedText');
+            const confidenceValue = document.getElementById('confidenceValue');
+            const statusValue = document.getElementById('statusValue');
             
-            if (author && message) {
-                // Create new message element
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message';
-                messageDiv.innerHTML = `
-                    <div class="message-header">
-                        <span class="message-author">${author}</span>
-                        <div>
-                            <span class="status-badge status-warning">Pending Review</span>
-                            <span class="message-time">Just now</span>
-                        </div>
-                    </div>
-                    <div class="message-content">${message}</div>
-                `;
-                
-                // Add to messages list
-                document.getElementById('messagesList').insertBefore(messageDiv, document.getElementById('messagesList').firstChild);
-                
-                // Clear form
-                document.getElementById('author').value = '';
-                document.getElementById('message').value = '';
-
-                // Attempt moderation via backend
-                const statusBadge = messageDiv.querySelector('.status-badge');
-                fetch(`${API_BASE}/predict`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: message })
-                })
-                .then(async (resp) => {
-                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                    return resp.json();
-                })
-                .then((data) => {
-                    // data: { label, normal_score, components }
-                    if (data.label && typeof data.normal_score === 'number') {
-                        if (data.label.toLowerCase() === 'normal' || data.normal_score >= 0.5) {
-                            statusBadge.textContent = 'Safe';
-                            statusBadge.classList.remove('status-warning', 'status-danger');
-                            statusBadge.classList.add('status-safe');
-                        } else {
-                            statusBadge.textContent = 'Flagged';
-                            statusBadge.classList.remove('status-warning', 'status-safe');
-                            statusBadge.classList.add('status-danger');
-                        }
-                    } else {
-                        statusBadge.textContent = 'Review';
-                        statusBadge.classList.remove('status-safe', 'status-danger');
-                        statusBadge.classList.add('status-warning');
-                    }
-                })
-                .catch(() => {
-                    // If backend is unavailable or errors, keep as Review
-                    statusBadge.textContent = 'Review';
-                    statusBadge.classList.remove('status-safe', 'status-danger');
-                    statusBadge.classList.add('status-warning');
-                });
+            if (!message) {
+                return;
             }
+
+            // Reset UI
+            errorDiv.classList.remove('show');
+            errorDiv.textContent = '';
+            resultDiv.classList.add('show');
+            statusBadge.textContent = 'PROCESSING...';
+            statusBadge.className = 'status-badge status-loading';
+            confidenceValue.textContent = '--';
+            statusValue.textContent = '--';
+            analyzedText.textContent = message;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'ANALYZING...';
+
+            // Call backend
+            fetch(`${API_BASE}/predict`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: message })
+            })
+            .then(async (resp) => {
+                if (!resp.ok) {
+                    const error = await resp.json().catch(() => ({ detail: `HTTP ${resp.status} Error` }));
+                    throw new Error(error.detail || `HTTP ${resp.status}`);
+                }
+                return resp.json();
+            })
+            .then((data) => {
+                const isSafe = data.label && data.label.toLowerCase() === 'normal';
+                const normalScore = data.normal_score || 0;
+                const confidencePercent = Math.round(normalScore * 100);
+                
+                // Update status badge
+                if (isSafe) {
+                    statusBadge.textContent = 'SAFE';
+                    statusBadge.className = 'status-badge status-safe';
+                    statusValue.textContent = 'SAFE';
+                } else {
+                    statusBadge.textContent = 'FLAGGED';
+                    statusBadge.className = 'status-badge status-danger';
+                    statusValue.textContent = 'FLAGGED';
+                }
+
+                // Update confidence
+                confidenceValue.textContent = confidencePercent + '%';
+            })
+            .catch((error) => {
+                errorDiv.textContent = `ERROR: ${error.message || 'Could not connect to backend. Make sure server is running at ' + API_BASE}`;
+                errorDiv.classList.add('show');
+                statusBadge.textContent = 'ERROR';
+                statusBadge.className = 'status-badge status-danger';
+                statusValue.textContent = 'ERROR';
+                confidenceValue.textContent = '--';
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'ANALYZE';
+            });
         });
     </script>
 </body>
