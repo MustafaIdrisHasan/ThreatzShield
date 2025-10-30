@@ -316,7 +316,9 @@
     </div>
 
     <script>
-        // Simple message posting functionality (frontend only)
+        const API_BASE = 'http://127.0.0.1:8000';
+
+        // Simple message posting functionality with backend call
         document.getElementById('messageForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -344,9 +346,42 @@
                 // Clear form
                 document.getElementById('author').value = '';
                 document.getElementById('message').value = '';
-                
-                // Show success message
-                alert('Message posted! (Note: This is a demo - no backend connection)');
+
+                // Attempt moderation via backend
+                const statusBadge = messageDiv.querySelector('.status-badge');
+                fetch(`${API_BASE}/predict`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: message })
+                })
+                .then(async (resp) => {
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    return resp.json();
+                })
+                .then((data) => {
+                    // data: { label, normal_score, components }
+                    if (data.label && typeof data.normal_score === 'number') {
+                        if (data.label.toLowerCase() === 'normal' || data.normal_score >= 0.5) {
+                            statusBadge.textContent = 'Safe';
+                            statusBadge.classList.remove('status-warning', 'status-danger');
+                            statusBadge.classList.add('status-safe');
+                        } else {
+                            statusBadge.textContent = 'Flagged';
+                            statusBadge.classList.remove('status-warning', 'status-safe');
+                            statusBadge.classList.add('status-danger');
+                        }
+                    } else {
+                        statusBadge.textContent = 'Review';
+                        statusBadge.classList.remove('status-safe', 'status-danger');
+                        statusBadge.classList.add('status-warning');
+                    }
+                })
+                .catch(() => {
+                    // If backend is unavailable or errors, keep as Review
+                    statusBadge.textContent = 'Review';
+                    statusBadge.classList.remove('status-safe', 'status-danger');
+                    statusBadge.classList.add('status-warning');
+                });
             }
         });
     </script>

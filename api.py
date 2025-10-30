@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from pydantic import BaseModel
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import pathlib
 import sys
 
@@ -26,6 +27,20 @@ class PredictResponse(BaseModel):
 
 
 app = FastAPI(title="Cyberbullying Detection API")
+
+# Allow local dev pages to call the API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/health")
+def health() -> Dict[str, str]:
+    return {"status": "ok"}
 
 
 @app.post("/predict", response_model=PredictResponse)
