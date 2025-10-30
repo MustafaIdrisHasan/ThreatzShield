@@ -1,7 +1,10 @@
+import os
 try:
     from lstmtest3 import lstm_predict
     from tensorflow.keras.models import load_model
-    lstm_model = load_model('model3.h5')
+    _BASE_DIR = os.path.dirname(__file__)
+    _LSTM_PATH = os.path.join(_BASE_DIR, 'model3.h5')
+    lstm_model = load_model(_LSTM_PATH)
 except Exception as e:
     lstm_predict = None
     lstm_model = None
@@ -12,7 +15,7 @@ from berttest2 import bert_predict
 import joblib
 from randomforesttest import randomforestpredict, train_randomforest
 
-model_filename = 'random_forest_model.pkl'
+model_filename = os.path.join(os.path.dirname(__file__), 'random_forest_model.pkl')
 try:
     randomforest_model = joblib.load(model_filename)
 except Exception:

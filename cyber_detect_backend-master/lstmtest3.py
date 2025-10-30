@@ -27,7 +27,8 @@ import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 
-main_data=pd.read_csv("train.csv")
+DATA_PATH = os.path.join(os.path.dirname(__file__), "train.csv")
+main_data=pd.read_csv(DATA_PATH)
 data=main_data.copy()
 data.drop(columns=['id'],axis=1,inplace=True)
 
@@ -147,5 +148,4 @@ def lstm_predict(model , text):
     # ftest[ftest['pred_sentiment']==1]
 
     return [ftest['pred_sentiment'].iloc[0] , 1- ftest['pred_sentiment'].iloc[0]]
-
 
