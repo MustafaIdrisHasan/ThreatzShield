@@ -15,6 +15,13 @@
 
 ---
 
+## 📧 Contact & Links
+
+- **GitHub:** [ThreatzShield Repository](https://github.com/MustafaIdrisHasan/ThreatzShield)
+- **Demo:** Run locally or deploy to see it in action!
+
+---
+
 ## 🎯 What is ThreatzShield?
 
 ThreatzShield is a **production-ready AI content moderation system** that analyzes text, images, and audio in real-time to detect cyberbullying, hate speech, and offensive language. Built with modern machine learning techniques, it combines the power of **BERT transformers, LSTM neural networks, and Random Forest** into a single, robust ensemble model.
@@ -349,14 +356,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - FastAPI, PyTorch, TensorFlow, scikit-learn
 - HuggingFace Transformers
 - All open-source contributors
-
----
-
-## 📧 Contact & Links
-
-- **GitHub:** [Your Repository Link](https://github.com/YourUsername/ThreatzShield)
-- **Documentation:** [Technical Docs](docs/TECHNICAL_DOCUMENTATION.md)
-- **Demo:** Run locally or deploy to see it in action!
 
 ---
 
