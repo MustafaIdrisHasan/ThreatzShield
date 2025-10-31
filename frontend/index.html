@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THREATZSHIELD</title>
+    <title>ThreatzShield - AI Content Moderation</title>
     <style>
         * {
             margin: 0;
@@ -12,361 +12,773 @@
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background: #000;
-            color: #fff;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #e5ddd5;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4c4c4' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #075e54;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: #34b7f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .header-info h1 {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .header-info p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
             padding: 20px;
-            line-height: 1.6;
+            background: #ece5dd;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            border: 8px solid #fff;
-            padding: 40px;
-            background: #000;
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .header {
-            border-bottom: 8px solid #fff;
-            padding-bottom: 20px;
-            margin-bottom: 40px;
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
         }
 
-        h1 {
-            font-size: 48px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 10px;
-            text-shadow: 4px 4px 0 #fff;
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #b9b9b9;
+            border-radius: 3px;
         }
 
-        .subtitle {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            background: #fff;
-            color: #000;
+        .message-bubble {
+            max-width: 70%;
             padding: 8px 12px;
-            display: inline-block;
-            margin-top: 10px;
+            border-radius: 7.5px;
+            word-wrap: break-word;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .form-section {
-            margin-bottom: 40px;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        label {
+        .message-user {
+            align-self: flex-end;
+            background: #dcf8c6;
+            margin-left: auto;
+        }
+
+        .message-safe {
+            background: #dcf8c6;
+            border-left: 4px solid #25d366;
+            animation: glowGreen 2s ease-in-out;
+        }
+
+        .message-warning {
+            background: #fff9c4;
+            border-left: 4px solid #ffc107;
+            animation: glowYellow 2s ease-in-out;
+        }
+
+        .message-danger {
+            background: #ffeaa7;
+            border-left: 4px solid #e74c3c;
+            animation: glowRed 2s ease-in-out;
+        }
+
+        @keyframes glowGreen {
+            0%, 100% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(37, 211, 102, 0.8); }
+        }
+
+        @keyframes glowYellow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 193, 7, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(255, 193, 7, 0.8); }
+        }
+
+        @keyframes glowRed {
+            0%, 100% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(231, 76, 60, 0.8); }
+        }
+
+        .message-content {
+            font-size: 15px;
+            line-height: 1.4;
+            color: #303030;
+            margin-bottom: 5px;
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: #667781;
+            margin-top: 5px;
+        }
+
+        .message-image {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-bottom: 5px;
             display: block;
-            font-size: 18px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            letter-spacing: 2px;
+        }
+
+        .message-audio {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .audio-icon {
+            font-size: 24px;
+        }
+
+        .audio-info {
+            flex: 1;
+        }
+
+        .audio-filename {
+            font-size: 13px;
+            font-weight: 600;
+            color: #303030;
+        }
+
+        .audio-transcript {
+            font-size: 12px;
+            color: #667781;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+
+        .status-safe { background: #25d366; }
+        .status-warning { background: #ffc107; }
+        .status-danger { background: #e74c3c; }
+
+        .confidence-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .confidence-high {
+            background: #25d366;
+            color: white;
+        }
+
+        .confidence-medium {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .confidence-low {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .chat-input-area {
+            background: #f0f0f0;
+            padding: 10px 15px;
+            border-top: 1px solid #e4e4e4;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            background: #ffffff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #667781;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .tab-btn:hover {
+            background: #e9edef;
+        }
+
+        .tab-btn.active {
+            background: #075e54;
+            color: white;
+            border-color: #075e54;
+        }
+
+        .input-panel {
+            display: none;
+            width: 100%;
+        }
+
+        .input-panel.active {
+            display: block;
+        }
+
+        .text-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
         }
 
         textarea {
-            width: 100%;
-            background: #000;
-            color: #fff;
-            border: 6px solid #fff;
-            padding: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            resize: vertical;
-            min-height: 200px;
+            flex: 1;
+            border: none;
+            border-radius: 21px;
+            padding: 10px 15px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            max-height: 100px;
+            background: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         textarea:focus {
             outline: none;
-            background: #fff;
-            color: #000;
         }
 
-        button {
-            background: #fff;
-            color: #000;
-            border: 6px solid #fff;
-            padding: 20px 40px;
-            font-family: 'Courier New', monospace;
-            font-size: 20px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+        .send-button {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: #075e54;
+            color: white;
             cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        button:hover {
-            background: #000;
-            color: #fff;
+        .send-button:hover {
+            background: #128c7e;
+            transform: scale(1.05);
         }
 
-        button:active {
-            transform: translate(4px, 4px);
-            box-shadow: -4px -4px 0 #fff;
-        }
-
-        button:disabled {
+        .send-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        .result {
-            border: 8px solid #fff;
+        .file-upload-area {
+            border: 2px dashed #b9b9b9;
+            border-radius: 10px;
             padding: 30px;
-            margin-top: 40px;
-            display: none;
-            background: #000;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
         }
 
-        .result.show {
+        .file-upload-area:hover {
+            border-color: #075e54;
+            background: #f5f5f5;
+        }
+
+        .file-preview {
+            display: none;
+            position: relative;
+        }
+
+        .file-preview.show {
             display: block;
         }
 
-        .result-header {
-            border-bottom: 4px solid #fff;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .file-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 5px;
+            display: block;
+            margin: 0 auto;
         }
 
-        .result-title {
-            font-size: 24px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+        .file-preview audio {
+            width: 100%;
+            margin-top: 10px;
         }
 
-        .status-badge {
-            padding: 12px 24px;
-            border: 4px solid #fff;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 18px;
-        }
-
-        .status-safe {
-            background: #fff;
-            color: #000;
-        }
-
-        .status-danger {
-            background: #000;
-            color: #fff;
-            border-color: #fff;
-        }
-
-        .status-loading {
-            background: #fff;
-            color: #000;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.5; }
-        }
-
-        .message-display {
-            background: #fff;
-            color: #000;
-            padding: 20px;
-            margin: 20px 0;
-            border: 4px solid #000;
-            font-family: 'Courier New', monospace;
+        .remove-file-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
             font-size: 14px;
-            line-height: 1.8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .metrics {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+        .upload-placeholder {
+            pointer-events: none;
         }
 
-        .metric-box {
-            border: 4px solid #fff;
-            padding: 20px;
-            background: #000;
-        }
-
-        .metric-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .upload-placeholder-icon {
+            font-size: 48px;
             margin-bottom: 10px;
         }
 
-        .metric-value {
-            font-size: 36px;
-            font-weight: 900;
-            font-family: 'Courier New', monospace;
-        }
-
-        .error-box {
-            border: 6px solid #fff;
-            background: #000;
-            color: #fff;
-            padding: 20px;
-            margin-top: 20px;
-            display: none;
-            border-left: 12px solid #fff;
-        }
-
-        .error-box.show {
-            display: block;
-        }
-
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 4px solid #fff;
-            font-size: 12px;
+        .empty-state {
             text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            color: #667781;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                border-width: 4px;
+            .app-container {
+                height: 100vh;
+                border-radius: 0;
             }
 
-            h1 {
-                font-size: 32px;
-            }
-
-            .metrics {
-                grid-template-columns: 1fr;
+            .message-bubble {
+                max-width: 85%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>THREATZSHIELD</h1>
-            <div class="subtitle">AI CONTENT MODERATION SYSTEM</div>
-        </div>
-
-        <div class="form-section">
-            <label>INPUT TEXT FOR ANALYSIS</label>
-            <form id="messageForm">
-                <textarea id="message" name="message" placeholder="ENTER YOUR TEXT HERE..." required></textarea>
-                <button type="submit" id="submitBtn">ANALYZE</button>
-            </form>
-
-            <div class="error-box" id="errorMessage"></div>
-
-            <div class="result" id="result">
-                <div class="result-header">
-                    <div class="result-title">ANALYSIS RESULT</div>
-                    <div class="status-badge status-loading" id="statusBadge">PROCESSING...</div>
-                </div>
-                
-                <div class="message-display" id="analyzedText"></div>
-                
-                <div class="metrics">
-                    <div class="metric-box">
-                        <div class="metric-label">CONFIDENCE</div>
-                        <div class="metric-value" id="confidenceValue">--</div>
-                    </div>
-                    <div class="metric-box">
-                        <div class="metric-label">STATUS</div>
-                        <div class="metric-value" id="statusValue" style="font-size: 24px;">--</div>
-                    </div>
-                </div>
+    <div class="app-container">
+        <div class="chat-header">
+            <div class="header-icon">🛡️</div>
+            <div class="header-info">
+                <h1>ThreatzShield</h1>
+                <p>AI Content Moderation System</p>
             </div>
         </div>
 
-        <div class="footer">
-            THREATZSHIELD V1.0 | BERT + LSTM + RANDOM FOREST ENSEMBLE
+        <div class="chat-messages" id="chatMessages">
+            <div class="empty-state">
+                <div class="empty-state-icon">💬</div>
+                <p>Start analyzing content for cyberbullying and offensive language</p>
+                <p style="font-size: 12px; margin-top: 5px;">Send text, images, or audio messages to begin</p>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div style="width: 100%;">
+                <div class="input-tabs">
+                    <button type="button" class="tab-btn active" data-type="text">📝 Text</button>
+                    <button type="button" class="tab-btn" data-type="image">🖼️ Image</button>
+                    <button type="button" class="tab-btn" data-type="audio">🎵 Audio</button>
+                </div>
+
+                <div class="input-panel active" id="textPanel">
+                    <div class="text-input-wrapper">
+                        <textarea id="messageInput" placeholder="Type a message..." rows="1"></textarea>
+                        <button class="send-button" id="sendTextBtn" type="button">📤</button>
+                    </div>
+                </div>
+
+                <div class="input-panel" id="imagePanel">
+                    <div class="file-upload-area" id="imageUploadArea">
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                        <div class="upload-placeholder">
+                            <div class="upload-placeholder-icon">📷</div>
+                            <div>Click to upload or drag & drop an image</div>
+                        </div>
+                        <div class="file-preview" id="imagePreview">
+                            <img id="imagePreviewImg" alt="Preview">
+                            <button class="remove-file-btn" onclick="clearImage()">✕</button>
+                        </div>
+                    </div>
+                    <button class="send-button" id="sendImageBtn" type="button" style="margin-top: 10px; width: 100%; border-radius: 21px; height: 40px;">Send Image</button>
+                </div>
+
+                <div class="input-panel" id="audioPanel">
+                    <div class="file-upload-area" id="audioUploadArea">
+                        <input type="file" id="audioInput" accept="audio/*" style="display: none;">
+                        <div class="upload-placeholder">
+                            <div class="upload-placeholder-icon">🎵</div>
+                            <div>Click to upload or drag & drop an audio file</div>
+                        </div>
+                        <div class="file-preview" id="audioPreview">
+                            <audio id="audioPreviewPlayer" controls></audio>
+                            <div id="audioFileName" style="margin-top: 10px; font-weight: 600;"></div>
+                            <button class="remove-file-btn" onclick="clearAudio()">✕</button>
+                        </div>
+                    </div>
+                    <button class="send-button" id="sendAudioBtn" type="button" style="margin-top: 10px; width: 100%; border-radius: 21px; height: 40px;">Send Audio</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         const API_BASE = 'http://127.0.0.1:8000';
+        let messageId = 0;
 
-        document.getElementById('messageForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const message = document.getElementById('message').value.trim();
-            const submitBtn = document.getElementById('submitBtn');
-            const resultDiv = document.getElementById('result');
-            const errorDiv = document.getElementById('errorMessage');
-            const statusBadge = document.getElementById('statusBadge');
-            const analyzedText = document.getElementById('analyzedText');
-            const confidenceValue = document.getElementById('confidenceValue');
-            const statusValue = document.getElementById('statusValue');
-            
-            if (!message) {
-                return;
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const type = this.dataset.type;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.input-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById(type + 'Panel').classList.add('active');
+            });
+        });
+
+        // Remove empty state on first message
+        function removeEmptyState() {
+            const emptyState = document.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
             }
+        }
 
-            // Reset UI
-            errorDiv.classList.remove('show');
-            errorDiv.textContent = '';
-            resultDiv.classList.add('show');
-            statusBadge.textContent = 'PROCESSING...';
-            statusBadge.className = 'status-badge status-loading';
-            confidenceValue.textContent = '--';
-            statusValue.textContent = '--';
-            analyzedText.textContent = message;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'ANALYZING...';
+        // Determine message color based on confidence
+        function getMessageClass(normalScore) {
+            if (normalScore >= 0.7) return 'message-safe';
+            if (normalScore >= 0.4) return 'message-warning';
+            return 'message-danger';
+        }
 
-            // Call backend
+        function getStatusIndicator(normalScore) {
+            if (normalScore >= 0.7) return '<span class="status-indicator status-safe"></span>';
+            if (normalScore >= 0.4) return '<span class="status-indicator status-warning"></span>';
+            return '<span class="status-indicator status-danger"></span>';
+        }
+
+        function getConfidenceBadge(normalScore) {
+            const percent = Math.round(normalScore * 100);
+            let className = 'confidence-low';
+            if (percent >= 70) className = 'confidence-high';
+            else if (percent >= 40) className = 'confidence-medium';
+            return `<span class="confidence-badge ${className}">${percent}%</span>`;
+        }
+
+        function getStatusText(label, normalScore) {
+            if (label && label.toLowerCase() === 'normal') {
+                return normalScore >= 0.7 ? '✅ Safe' : '⚠️ Possibly Safe';
+            }
+            return '🚫 Flagged';
+        }
+
+        // Add message to chat
+        function addMessage(content, type, analysisData = null) {
+            removeEmptyState();
+            const chatMessages = document.getElementById('chatMessages');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-bubble message-user';
+            
+            let messageHTML = '';
+            let messageClass = 'message-safe';
+            
+            if (analysisData) {
+                const normalScore = analysisData.normal_score || 0;
+                messageClass = getMessageClass(normalScore);
+                const statusIndicator = getStatusIndicator(normalScore);
+                const confidenceBadge = getConfidenceBadge(normalScore);
+                const statusText = getStatusText(analysisData.label, normalScore);
+                
+                messageHTML += `<div class="message-content">${content}</div>`;
+                messageHTML += `<div class="message-meta">${statusText} ${confidenceBadge} ${statusIndicator}</div>`;
+            } else {
+                messageHTML += `<div class="message-content">${content}</div>`;
+                messageHTML += `<div class="message-meta">Processing...</div>`;
+            }
+            
+            messageDiv.className = `message-bubble message-user ${messageClass}`;
+            messageDiv.innerHTML = messageHTML;
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return messageDiv;
+        }
+
+        // Update message with analysis
+        function updateMessage(messageDiv, analysisData) {
+            const normalScore = analysisData.normal_score || 0;
+            const messageClass = getMessageClass(normalScore);
+            const statusIndicator = getStatusIndicator(normalScore);
+            const confidenceBadge = getConfidenceBadge(normalScore);
+            const statusText = getStatusText(analysisData.label, normalScore);
+            const content = messageDiv.querySelector('.message-content').innerHTML;
+            
+            messageDiv.className = `message-bubble message-user ${messageClass}`;
+            messageDiv.querySelector('.message-meta').innerHTML = `${statusText} ${confidenceBadge} ${statusIndicator}`;
+        }
+
+        // Text message handler
+        document.getElementById('sendTextBtn').addEventListener('click', sendTextMessage);
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendTextMessage();
+            }
+        });
+
+        function sendTextMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messageDiv = addMessage(text, 'text');
+            input.value = '';
+            
+            const sendBtn = document.getElementById('sendTextBtn');
+            sendBtn.disabled = true;
+
             fetch(`${API_BASE}/predict`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: message })
+                body: JSON.stringify({ text: text })
             })
-            .then(async (resp) => {
-                if (!resp.ok) {
-                    const error = await resp.json().catch(() => ({ detail: `HTTP ${resp.status} Error` }));
-                    throw new Error(error.detail || `HTTP ${resp.status}`);
-                }
-                return resp.json();
+            .then(resp => resp.json())
+            .then(data => {
+                updateMessage(messageDiv, data);
             })
-            .then((data) => {
-                const isSafe = data.label && data.label.toLowerCase() === 'normal';
-                const normalScore = data.normal_score || 0;
-                const confidencePercent = Math.round(normalScore * 100);
-                
-                // Update status badge
-                if (isSafe) {
-                    statusBadge.textContent = 'SAFE';
-                    statusBadge.className = 'status-badge status-safe';
-                    statusValue.textContent = 'SAFE';
-                } else {
-                    statusBadge.textContent = 'FLAGGED';
-                    statusBadge.className = 'status-badge status-danger';
-                    statusValue.textContent = 'FLAGGED';
-                }
-
-                // Update confidence
-                confidenceValue.textContent = confidencePercent + '%';
-            })
-            .catch((error) => {
-                errorDiv.textContent = `ERROR: ${error.message || 'Could not connect to backend. Make sure server is running at ' + API_BASE}`;
-                errorDiv.classList.add('show');
-                statusBadge.textContent = 'ERROR';
-                statusBadge.className = 'status-badge status-danger';
-                statusValue.textContent = 'ERROR';
-                confidenceValue.textContent = '--';
+            .catch(error => {
+                messageDiv.querySelector('.message-meta').textContent = '❌ Error: ' + error.message;
+                messageDiv.classList.add('message-danger');
             })
             .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'ANALYZE';
+                sendBtn.disabled = false;
+            });
+        }
+
+        // Image handlers
+        const imageInput = document.getElementById('imageInput');
+        const imageUploadArea = document.getElementById('imageUploadArea');
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewImg = document.getElementById('imagePreviewImg');
+
+        imageUploadArea.addEventListener('click', () => imageInput.click());
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreviewImg.src = event.target.result;
+                    document.querySelector('#imageUploadArea .upload-placeholder').style.display = 'none';
+                    imagePreview.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function clearImage() {
+            imageInput.value = '';
+            imagePreview.classList.remove('show');
+            document.querySelector('#imageUploadArea .upload-placeholder').style.display = 'block';
+        }
+
+        document.getElementById('sendImageBtn').addEventListener('click', function() {
+            const file = imageInput.files[0];
+            if (!file) {
+                alert('Please select an image');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const messageDiv = addMessage(`<img src="${e.target.result}" class="message-image" alt="Uploaded image">`, 'image');
+                const sendBtn = document.getElementById('sendImageBtn');
+                sendBtn.disabled = true;
+
+                const formData = new FormData();
+                formData.append('image', file);
+
+                fetch(`${API_BASE}/predict/image`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(resp => resp.json())
+                .then(data => {
+                    updateMessage(messageDiv, data);
+                    if (data.extracted_text) {
+                        const contentDiv = messageDiv.querySelector('.message-content');
+                        contentDiv.innerHTML += `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 13px; color: #667781;"><strong>Extracted Text:</strong> ${data.extracted_text}</div>`;
+                    }
+                })
+                .catch(error => {
+                    messageDiv.querySelector('.message-meta').textContent = '❌ Error: ' + error.message;
+                    messageDiv.classList.add('message-danger');
+                })
+                .finally(() => {
+                    sendBtn.disabled = false;
+                    clearImage();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Audio handlers
+        const audioInput = document.getElementById('audioInput');
+        const audioUploadArea = document.getElementById('audioUploadArea');
+        const audioPreview = document.getElementById('audioPreview');
+        const audioPreviewPlayer = document.getElementById('audioPreviewPlayer');
+
+        audioUploadArea.addEventListener('click', () => audioInput.click());
+
+        audioInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                audioPreviewPlayer.src = url;
+                document.getElementById('audioFileName').textContent = file.name;
+                document.querySelector('#audioUploadArea .upload-placeholder').style.display = 'none';
+                audioPreview.classList.add('show');
+            }
+        });
+
+        function clearAudio() {
+            audioInput.value = '';
+            audioPreview.classList.remove('show');
+            document.querySelector('#audioUploadArea .upload-placeholder').style.display = 'block';
+        }
+
+        document.getElementById('sendAudioBtn').addEventListener('click', function() {
+            const file = audioInput.files[0];
+            if (!file) {
+                alert('Please select an audio file');
+                return;
+            }
+
+            const messageDiv = addMessage(`<div class="message-audio"><span class="audio-icon">🎵</span><div class="audio-info"><div class="audio-filename">${file.name}</div><div class="audio-transcript">Transcribing...</div></div></div>`, 'audio');
+            const sendBtn = document.getElementById('sendAudioBtn');
+            sendBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('audio', file);
+
+            fetch(`${API_BASE}/predict/audio`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                updateMessage(messageDiv, data);
+                if (data.extracted_text) {
+                    const transcriptDiv = messageDiv.querySelector('.audio-transcript');
+                    transcriptDiv.textContent = `Transcribed: ${data.extracted_text}`;
+                }
+            })
+            .catch(error => {
+                messageDiv.querySelector('.message-meta').textContent = '❌ Error: ' + error.message;
+                messageDiv.classList.add('message-danger');
+            })
+            .finally(() => {
+                sendBtn.disabled = false;
+                clearAudio();
+            });
+        });
+
+        // Drag and drop
+        [imageUploadArea, audioUploadArea].forEach(area => {
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.style.borderColor = '#075e54';
+            });
+            area.addEventListener('dragleave', () => {
+                area.style.borderColor = '#b9b9b9';
+            });
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                area.style.borderColor = '#b9b9b9';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    if (area === imageUploadArea) {
+                        imageInput.files = files;
+                        imageInput.dispatchEvent(new Event('change'));
+                    } else {
+                        audioInput.files = files;
+                        audioInput.dispatchEvent(new Event('change'));
+                    }
+                }
             });
         });
     </script>
