@@ -22,6 +22,43 @@ ThreatzShield is a production-ready API and web application that detects harmful
 
 ---
 
+## 🔎 Current Build Snapshot (2025-10-30)
+
+This is the state of the project as checked in today.
+
+- ✅ API working: `GET /health`, `POST /predict` return results; OpenAPI docs at `/docs`.
+- ✅ End-to-end wired: frontend (`frontend/index.html`) calls the backend and displays SAFE/FLAGGED with a confidence percentage.
+- ✅ Ensemble models: BERT + LSTM + RandomForest are orchestrated; fallbacks keep the system responsive even if a model can’t load.
+- ✅ Stability fixes: JSON serialization for numpy types; CORS enabled for local development.
+- ✅ Developer ergonomics: README, Dockerfile, deployment guide, API integration tests, evaluation script.
+- ⚠️ Known behaviors/limits right now:
+  - First request may be slower (model warm-up, ~3–5s cold start).
+  - LSTM may fall back to a neutral distribution on TF/Keras incompatibility (see Known Limitations).
+  - Accuracy depends on model artifacts and environment; run the evaluation script to report your local numbers.
+  - Large model/data files are ignored from git; ensure you manage artifacts in deployment.
+
+---
+
+## 💡 Why This Project Is Useful
+
+- Tackles a real problem: content safety for communities, apps, and platforms.
+- Practical interface: simple REST API and a drop-in web UI for instant human review.
+- Resilient design: ensemble + fallbacks prevents hard failures and keeps moderation flowing.
+- Extensible: swap models, reweight the ensemble, or add rules without breaking consumers.
+
+---
+
+## ⭐ Why It’s Great on a Resume
+
+Use these as bullet points:
+
+- Built an AI moderation service using an ensemble (BERT + LSTM + Random Forest) exposed via FastAPI; delivered real-time inference with a brutalist, accessible UI.
+- Designed a robust inference pipeline with dynamic thresholding, model fallbacks, and JSON-safe outputs; added health checks, error handling, and tests.
+- Shipped production conveniences: Dockerfile, deployment guide (Railway/Render/Heroku), evaluation scripts, and API integration tests.
+- Demonstrated systems thinking (weights/thresholds, serialization, CORS), and product sense (clear SAFE/FLAGGED outcomes and confidence for reviewers).
+
+---
+
 ## 📊 Performance Metrics
 
 ### Response Time
@@ -224,6 +261,28 @@ This will output:
 - Precision, Recall, F1-Score
 - Classification report
 - Test examples with predictions
+
+---
+
+## 🧭 Roadmap — Make It Even More Impressive
+
+Improvements you can implement next (and then cite in your README/results):
+
+- Model quality
+  - Tune ensemble weights and decision threshold; add a small ablation table (F1 vs weights/thresholds).
+  - Calibrate confidence (reliability curve) so the score maps to probability.
+  - Swap BERT→DistilBERT or export to ONNX/quantize to reduce latency.
+- Performance/observability
+  - Async endpoints; batch `/predict/bulk` for CSV; warm-up models on startup.
+  - Expose `/metrics` (Prometheus) with request counts and p50/p95 latency; add structured logs.
+- Product UX
+  - Show per-model contributions (BERT/LSTM/RF) and a simple risky-token heatmap.
+  - Add recent analyses + CSV upload/download; copy-as-cURL in the UI.
+- Reliability/security
+  - Rate limiting, content-length limits, input validation; restricted CORS for prod.
+  - CI/CD (GitHub Actions) to run tests, build Docker, and deploy on `main`.
+- Responsible AI
+  - Simple bias checks (false positive/negative rates across identity terms) and document limitations.
 
 ---
 
